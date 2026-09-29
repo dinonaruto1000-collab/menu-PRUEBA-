@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Values measured from the reference design at 390, 1000 and 1440 px.
+ * Breakpoints match the reference: phone < 810 <= tablet < 1200 <= desktop.
+ */
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-tablet: 810px;
+  --breakpoint-desktop: 1200px;
+
+  --color-cream: rgb(245, 227, 205);
+  --color-red: rgb(249, 24, 20);
+  --color-ink: rgb(27, 27, 27);
+  --color-ink-soft: rgb(31, 31, 31);
+  --color-pill: rgb(246, 246, 246);
+
+  --font-display: var(--font-mouse-memoirs), "Mouse Memoirs", sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-cream);
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p,
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 400;
+}
+
+@custom-variant hover-hover (@media (hover: hover) and (pointer: fine));
+
+/* The reference's 12px superellipse corners, and its fallback radius where corner-shape is unsupported. */
+@utility card-shape {
+  border-radius: 9px;
+  @supports (corner-shape: superellipse(1.5)) {
+    border-radius: 12px;
+    corner-shape: superellipse(1.5);
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Favourites ticker: 50 px/s leftwards, like the reference. */
+@keyframes ticker {
+  to {
+    transform: translateX(var(--ticker-distance));
+  }
+}
+
+.ticker {
+  animation: ticker var(--ticker-duration) linear infinite;
+}
+
+/* Appear effect: opacity only, no transform, as in the reference. */
+.reveal {
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.44, 0, 0.56, 1);
+}
+
+.reveal[data-visible="true"] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker {
+    animation: none;
+  }
+  .reveal {
+    transition: none;
+  }
 }
